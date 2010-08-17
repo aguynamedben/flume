@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.log4j.Logger;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
@@ -78,18 +80,30 @@ public class ThriftMasterRPC implements MasterRPC {
     }
   }
 
-  protected synchronized FlumeClientServer.Iface open(String host, int port)
+  protected synchronized FlumeClientServer.Iface open(String host, int port, boolean secured)
       throws IOException, TTransportException {
     // single open only
     Preconditions.checkState(masterClient == null, // && masterTransport ==
         // null,
         "client already open -- double open not allowed");
-    TTransport masterTransport = new TSocket(host, port);
+    TTransport masterTransport;
+    if (secured) {
+    	masterTransport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
+    } else {
+    	masterTransport = new TSocket(host, port);
+    }
     TProtocol protocol = new TBinaryProtocol(masterTransport);
     masterTransport.open();
     masterClient = new Client(protocol);
     LOG.info("Connected to master at " + host + ":" + port);
     return masterClient;
+  }
+  
+  protected synchronized FlumeClientServer.Iface open(String host, int port) throws IOException, TTransportException{
+	  // Get secured boolean from config
+	  FlumeConfiguration conf = FlumeConfiguration.get();
+	  boolean secured = conf.getIsSecureSSLTransport();
+	  return open(host, port, secured);
   }
 
   protected synchronized FlumeClientServer.Iface ensureConnected()

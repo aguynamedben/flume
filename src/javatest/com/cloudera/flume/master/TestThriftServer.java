@@ -18,8 +18,12 @@
 
 package com.cloudera.flume.master;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import junit.framework.TestCase;
 
@@ -31,6 +35,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
+import com.cloudera.flume.conf.FlumeConfiguration;
 import com.cloudera.flume.conf.thrift.FlumeConfigData;
 import com.cloudera.flume.conf.thrift.FlumeMasterAdminServer;
 import com.cloudera.flume.conf.thrift.FlumeMasterCommand;
@@ -81,12 +86,19 @@ public class TestThriftServer extends TestCase {
     }
   }
 
-  public void testMasterAdminServer() throws TException, InterruptedException {
+  public void testMasterAdminServer() throws TException, InterruptedException, UnknownHostException, IOException {
     MyThriftServer server = new MyThriftServer();
     server.serve();
 
     // Try connection
-    TTransport masterTransport = new TSocket("localhost", 56789);
+    FlumeConfiguration conf = FlumeConfiguration.get();
+	boolean secured = conf.getIsSecureSSLTransport();
+	TTransport masterTransport;
+	if (secured) {
+		masterTransport = new TSocket(SSLSocketFactory.getDefault().createSocket("localhost", 56789));
+	} else {
+		masterTransport = new TSocket("localhost", 56789);
+	}
     TProtocol protocol = new TBinaryProtocol(masterTransport);
     masterTransport.open();
     Client client = new Client(protocol);
