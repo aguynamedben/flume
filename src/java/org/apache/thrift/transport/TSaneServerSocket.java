@@ -107,11 +107,13 @@ public class TSaneServerSocket extends TServerTransport {
     	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(bindAddr.getPort());
       } else {
     	  serverSocket_ = new ServerSocket();
-    	  // Bind to listening port
-    	  serverSocket_.bind(bindAddr);
       }
       // Prevent 2MSL delay problem on server restarts
       serverSocket_.setReuseAddress(true);
+      // Bind to listening port
+      if (!serverSocket_.isBound()) {
+    	  serverSocket_.bind(bindAddr);
+      }
     } catch (IOException ioe) {
       serverSocket_ = null;
       ioe.printStackTrace();
