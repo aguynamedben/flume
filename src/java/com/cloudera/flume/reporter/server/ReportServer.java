@@ -18,6 +18,7 @@
 
 package com.cloudera.flume.reporter.server;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,8 +128,9 @@ public class ReportServer extends ThriftServer implements
 
   /**
    * Starts the Thrift server
+ * @throws IOException 
    */
-  public void serve() throws TTransportException {
+  public void serve() throws TTransportException, IOException {
     LOG.info("Starting ReportServer...");
     TProcessor processor = new FlumeReportServer.Processor(this);
     this.start(processor, port, "Flume Report Server");
