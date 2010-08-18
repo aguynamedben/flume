@@ -93,7 +93,9 @@ public class ThriftMasterRPC implements MasterRPC {
     	masterTransport = new TSocket(host, port);
     }
     TProtocol protocol = new TBinaryProtocol(masterTransport);
-    masterTransport.open();
+    if (!masterTransport.isOpen()) {
+    	masterTransport.open();
+    }
     masterClient = new Client(protocol);
     LOG.info("Connected to master at " + host + ":" + port);
     return masterClient;

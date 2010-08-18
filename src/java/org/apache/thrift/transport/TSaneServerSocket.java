@@ -104,14 +104,16 @@ public class TSaneServerSocket extends TServerTransport {
     try {
       // Make server socket
       if(secured) {
-    	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket();
+    	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(bindAddr.getPort(), 1024, bindAddr.getAddress());
       } else {
     	  serverSocket_ = new ServerSocket();
       }
       // Prevent 2MSL delay problem on server restarts
       serverSocket_.setReuseAddress(true);
       // Bind to listening port
-      serverSocket_.bind(bindAddr);
+      if (!serverSocket_.isBound()) {
+    	  serverSocket_.bind(bindAddr);
+      }
     } catch (IOException ioe) {
       serverSocket_ = null;
       throw new TTransportException("Could not create ServerSocket on address "
