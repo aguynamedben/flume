@@ -87,8 +87,6 @@ public class ThriftMasterRPC implements MasterRPC {
         // null,
         "client already open -- double open not allowed");
     TTransport masterTransport;
-    ///////
-    LOG.info("trying to connect to host: " + host + " port: " + port);
     if (secured) {
     	masterTransport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
     } else {

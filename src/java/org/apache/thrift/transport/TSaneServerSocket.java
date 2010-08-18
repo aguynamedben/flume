@@ -105,11 +105,9 @@ public class TSaneServerSocket extends TServerTransport {
       // Make server socket
       if(secured) {
     	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(bindAddr.getPort());
-    	  /////////
-    	  LOGGER.info("Socket address: " + bindAddr.getAddress().toString());
       } else {
     	  serverSocket_ = new ServerSocket();
-    	// Bind to listening port
+    	  // Bind to listening port
     	  serverSocket_.bind(bindAddr);
       }
       // Prevent 2MSL delay problem on server restarts
