@@ -18,12 +18,18 @@
 
 package com.cloudera.flume.util;
 
+import java.io.IOException;
+
+import javax.net.ssl.SSLServerSocketFactory;
+
 import org.apache.log4j.Logger;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TBinaryProtocol.Factory;
 import org.apache.thrift.server.TSaneThreadPoolServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TSaneServerSocket;
+import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 
@@ -39,7 +45,7 @@ public class ThriftServer {
   private static final Logger LOG = Logger.getLogger(ThriftServer.class);
 
   protected TServerTransport serverTransport = null;;
-  protected TSaneThreadPoolServer server = null;  
+  protected TThreadPoolServer server = null;  
   String description;
   protected int port;
 
@@ -70,10 +76,11 @@ public class ThriftServer {
 
   /**
    * Blocks until Thrift server has started and can accept connections
+ * @throws IOException 
    */
   synchronized protected void start(TProcessor processor, final int port,
-      final String description) throws TTransportException {
-    start(processor, description, new TSaneServerSocket(port));
+      final String description) throws TTransportException, IOException {
+    start(processor, description, new TServerSocket(SSLServerSocketFactory.getDefault().createServerSocket(port)));
   }
 
   /**
@@ -86,7 +93,7 @@ public class ThriftServer {
     this.description = description;
     this.serverTransport = serverTransport;
     Factory protFactory = new TBinaryProtocol.Factory(strictRead, strictWrite);
-    server = new TSaneThreadPoolServer(processor, serverTransport, protFactory);
-    server.start();
+    server = new TThreadPoolServer(processor, serverTransport, protFactory);
+    server.serve();
   }
 }

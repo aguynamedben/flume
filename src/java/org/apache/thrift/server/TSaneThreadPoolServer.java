@@ -160,7 +160,6 @@ public class TSaneThreadPoolServer {
   public void start() {
     try {
       serverTransport_.listen(); // opens, binds and listens
-      //serverTransport_.accept();
       stopped_ = false;
     } catch (TTransportException ttx) {
       LOGGER.error("Error occurred during listening.", ttx);
