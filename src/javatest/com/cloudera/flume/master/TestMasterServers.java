@@ -197,7 +197,7 @@ public class TestMasterServers {
   }
   
   @Test
-  public void testReports() throws TException {
+  public void testReports() throws TException, IOException {
     FlumeConfiguration.createTestableConfiguration();
     ReportManager rptMan = ReportManager.get();
     rptMan.clear();

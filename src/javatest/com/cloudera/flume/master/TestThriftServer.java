@@ -18,6 +18,7 @@
 
 package com.cloudera.flume.master;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class TestThriftServer extends TestCase {
 
   class MyThriftServer extends ThriftServer implements Iface {
 
-    public void serve() throws TTransportException {
+    public void serve() throws TTransportException, IOException {
       LOG.info("Starting dummy server");
       this.start(new FlumeMasterAdminServer.Processor(this), 56789,
           "MyThriftServer");
@@ -81,7 +82,7 @@ public class TestThriftServer extends TestCase {
     }
   }
 
-  public void testMasterAdminServer() throws TException, InterruptedException {
+  public void testMasterAdminServer() throws TException, InterruptedException, IOException {
     MyThriftServer server = new MyThriftServer();
     server.serve();
 
@@ -105,7 +106,7 @@ public class TestThriftServer extends TestCase {
     server.stop();
   }
 
-  public void testThriftServerOpenClose() throws TTransportException {
+  public void testThriftServerOpenClose() throws TTransportException, IOException {
     MyThriftServer server = new MyThriftServer();
     for (int i = 0; i < 50; i++) {
       LOG.info("open close " + i);
