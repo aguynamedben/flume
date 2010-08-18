@@ -89,19 +89,21 @@ public class ThriftMasterRPC implements MasterRPC {
         "client already open -- double open not allowed");
     TTransport masterTransport = null;
     try {
-    if (secured) {
-    	LOG.info("trying to create client socket");
-    	masterTransport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
-    	LOG.info("creaated client socket");
-    } else {
-    	masterTransport = new TSocket(host, port);
-    }
-    }catch (IOException e) {
-    	e.printStackTrace();
-    }
+		if (secured) {
+			LOG.info("trying to create client socket");
+			masterTransport = new TSocket(SSLSocketFactory.getDefault()
+						.createSocket(host, port));
+			LOG.info("creaated client socket");
+		} else {
+			masterTransport = new TSocket(host, port);
+		}
+		
     TProtocol protocol = new TBinaryProtocol(masterTransport);
     masterTransport.open();
     masterClient = new Client(protocol);
+    } catch (Exception e) {
+		e.printStackTrace();
+	}
     LOG.info("Connected to master at " + host + ":" + port);
     return masterClient;
   }
