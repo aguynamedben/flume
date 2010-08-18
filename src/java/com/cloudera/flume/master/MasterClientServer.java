@@ -18,6 +18,7 @@
 
 package com.cloudera.flume.master;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,7 +109,7 @@ public class MasterClientServer extends ThriftServer implements
     return master.getAckMan().check(ackid);
   }
 
-  public void serve() throws TTransportException {
+  public void serve() throws TTransportException, IOException {
     LOG
         .info(String
             .format(
