@@ -19,6 +19,7 @@
 package com.cloudera.flume.agent;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,11 +87,17 @@ public class ThriftMasterRPC implements MasterRPC {
     Preconditions.checkState(masterClient == null, // && masterTransport ==
         // null,
         "client already open -- double open not allowed");
-    TTransport masterTransport;
+    TTransport masterTransport = null;
+    try {
     if (secured) {
+    	LOG.info("trying to create client socket");
     	masterTransport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
+    	LOG.info("creaated client socket");
     } else {
     	masterTransport = new TSocket(host, port);
+    }
+    }catch (IOException e) {
+    	e.printStackTrace();
     }
     TProtocol protocol = new TBinaryProtocol(masterTransport);
     masterTransport.open();
