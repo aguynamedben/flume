@@ -18,6 +18,7 @@
 
 package com.cloudera.flume.master;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,7 +71,7 @@ public class MasterAdminServer extends ThriftServer implements Iface {
         .toArray(new String[0])));
   }
 
-  public void serve() throws TTransportException {
+  public void serve() throws TTransportException, IOException {
     LOG.info(String.format(
         "Starting blocking thread pool server for admin server on port %d...",
         port));
