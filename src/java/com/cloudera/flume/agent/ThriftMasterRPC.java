@@ -99,7 +99,9 @@ public class ThriftMasterRPC implements MasterRPC {
 		}
 		
     TProtocol protocol = new TBinaryProtocol(masterTransport);
-    masterTransport.open();
+    if (!masterTransport.isOpen()) {
+    	masterTransport.open();
+    }
     masterClient = new Client(protocol);
     } catch (Exception e) {
 		e.printStackTrace();
