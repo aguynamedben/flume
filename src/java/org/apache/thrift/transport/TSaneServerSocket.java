@@ -111,7 +111,10 @@ public class TSaneServerSocket extends TServerTransport {
       // Prevent 2MSL delay problem on server restarts
       serverSocket_.setReuseAddress(true);
       // Bind to listening port
-      serverSocket_.bind(bindAddr);
+      LOGGER.info("Binding to port: " + bindAddr.toString());
+      if (!serverSocket_.isBound()) {
+    	  serverSocket_.bind(bindAddr);
+      }
     } catch (IOException ioe) {
       serverSocket_ = null;
       ioe.printStackTrace();
