@@ -104,7 +104,7 @@ public class TSaneServerSocket extends TServerTransport {
     try {
       // Make server socket
       if(secured) {
-    	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket();
+    	  serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(bindAddr.getPort());
       } else {
     	  serverSocket_ = new ServerSocket();
       }
