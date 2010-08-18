@@ -114,6 +114,7 @@ public class TSaneServerSocket extends TServerTransport {
       serverSocket_.bind(bindAddr);
     } catch (IOException ioe) {
       serverSocket_ = null;
+      ioe.printStackTrace();
       throw new TTransportException("Could not create ServerSocket on address "
           + bindAddr.toString() + ".");
     }
