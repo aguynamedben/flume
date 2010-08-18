@@ -21,6 +21,7 @@ package com.cloudera.flume.reporter.server;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -53,9 +54,10 @@ public class TestReportServer {
 
   /**
    * Create a new ReportServer and add a single report to it
+ * @throws IOException 
    */
   @Before
-  public void startReportServer() throws TTransportException {
+  public void startReportServer() throws TTransportException, IOException {
     final ReportEvent reportEvent = new ReportEvent("test");
     
     reportServer = new ReportServer(PORT);
@@ -119,9 +121,10 @@ public class TestReportServer {
 
   /**
    * Standard server test, make sure that open and close repeatedly don't throw.
+ * @throws IOException 
    */
   @Test
-  public void testOpenClose() throws TException {
+  public void testOpenClose() throws TException, IOException {
     for (int i = 0; i < 20; ++i) {
       reportServer = new ReportServer(PORT + 1);
       reportServer.serve();
