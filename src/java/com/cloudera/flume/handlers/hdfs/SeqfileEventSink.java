@@ -97,6 +97,9 @@ public class SeqfileEventSink extends EventSink.Base {
 
     WriteableEvent we = new WriteableEvent(e);
     writer.append(we.getEventKey(), we);
+    
+    byte[] utf8 = we.getBody();
+    LOG.info("Bytes to write: " + utf8);
 
     // flush if we are not buffering
     if (!bufferedIO)
