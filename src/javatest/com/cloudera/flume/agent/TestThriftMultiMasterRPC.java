@@ -47,11 +47,11 @@ public class TestThriftMultiMasterRPC extends TestCase {
   class MyThriftServer extends ThriftServer implements Iface {
     boolean first = true;
 
-    public void serve() throws TTransportException {
+    public void serve() throws TTransportException, IOException {
       serve(56789);
     }
 
-    public void serve(int port) throws TTransportException {
+    public void serve(int port) throws TTransportException, IOException {
       LOG.info("Starting dummy server");
       this.start(new FlumeClientServer.Processor(this), port, "MyThriftServer"
           + port);
