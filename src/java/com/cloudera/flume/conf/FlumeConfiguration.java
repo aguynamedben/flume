@@ -100,6 +100,9 @@ public class FlumeConfiguration extends Configuration {
   public static final int DEFAULT_ZK_CLIENT_PORT = 3181;
   public static final int DEFAULT_ZK_SERVER_QUORUM_PORT = 3182;  
   public static final int DEFAULT_ZK_SERVER_ELECTION_PORT = 3183;
+  
+  // Security value
+  public static final String SECURED_SSL_TRANSFER = "flume.secure.transport";
 
   // Default sink / source variables
   static public final int DEFAULT_SCRIBE_SOURCE_PORT = 1463;
@@ -855,6 +858,13 @@ public class FlumeConfiguration extends Configuration {
     return getLong(THRIFT_CLOSE_MAX_SLEEP, 10 * 1000);
   }
 
+  /*
+   * Returns the boolean to secure data transfer or not
+   */
+	public boolean getIsSecureSSLTransport() {
+		return getBoolean(SECURED_SSL_TRANSFER, false);
+	}
+    
   /**
    * The default port for scribe sources to listen on
    */

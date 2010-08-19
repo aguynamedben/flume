@@ -43,8 +43,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.cloudera.flume.conf.FlumeConfiguration;
 
 /**
  * Wrapper around ServerSocket for Thrift.
@@ -95,19 +100,33 @@ public class TSaneServerSocket extends TServerTransport {
     this.bindAddr = bindAddr;
   }
 
-  private void bind() throws TTransportException {
+  private void bind(boolean secured) throws TTransportException {
     try {
       // Make server socket
       serverSocket_ = new ServerSocket();
+      if(secured) {
+          serverSocket_ = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(bindAddr.getPort(), 1024, bindAddr.getAddress());
+      } else {
+          serverSocket_ = new ServerSocket();
+      }
       // Prevent 2MSL delay problem on server restarts
       serverSocket_.setReuseAddress(true);
       // Bind to listening port
-      serverSocket_.bind(bindAddr);
+      if (serverSocket_.isBound()) {
+    	  serverSocket_.bind(bindAddr);
+      }
     } catch (IOException ioe) {
       serverSocket_ = null;
       throw new TTransportException("Could not create ServerSocket on address "
           + bindAddr.toString() + ".");
     }
+  }
+  
+  private void bind() throws TTransportException {
+	// Get secured boolean from config
+	FlumeConfiguration conf = FlumeConfiguration.get();
+	boolean secured = conf.getIsSecureSSLTransport();
+	bind(secured);
   }
 
   public void listen() throws TTransportException {
