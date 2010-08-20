@@ -89,7 +89,11 @@ if [ -z "$FLUME_HOME" ]; then
     export FLUME_HOME="$CMDPATH"
 fi
 
-JOPTS="-Dflume.log.dir=${FLUME_LOG_DIR:-${FLUME_HOME}/logs} "
+# Get any JOPTS that might exists from flume-env.sh
+if [ -z "$JOPTS" ]; then
+    export JOPTS=""
+fi
+JOPTS+="-Dflume.log.dir=${FLUME_LOG_DIR:-${FLUME_HOME}/logs} "
 JOPTS+="-Dflume.log.file=${FLUME_LOGFILE:-flume.log} "
 JOPTS+="-Dflume.root.logger=${FLUME_ROOT_LOGGER:-INFO,console} "
 JOPTS+="-Dzookeeper.root.logger=${ZOOKEEPER_ROOT_LOGGER:-ERROR,console} "

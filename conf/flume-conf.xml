@@ -260,5 +260,15 @@ configuration values placed in flume-site.xml.  -->
     <value>/tmp/flume-zk</value>
     <description>The base directory in which the ZBCS stores data.</description>
   </property>
+
+  <!-- ================================================== -->
+  <!-- Secure transport flag ============================ -->
+  <!-- ================================================== -->
+  <property>
+    <name>flume.secure.transport</name>
+    <value>false</value>
+    <description>This turns on SSL security for data transfer</description>
+  </property>
+
   
 </configuration>

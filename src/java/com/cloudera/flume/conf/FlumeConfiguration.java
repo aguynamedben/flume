@@ -103,6 +103,9 @@ public class FlumeConfiguration extends Configuration {
 
   // Default sink / source variables
   static public final int DEFAULT_SCRIBE_SOURCE_PORT = 1463;
+  
+  // Secure transport parameter
+  public static final String SECURED_SSL_TRANSPORT = "flume.secure.transport";
 
   // Watch dog parameters
   public final static String WATCHDOG_MAX_RESTARTS = "watchdog.restarts.max";
@@ -860,6 +863,13 @@ public class FlumeConfiguration extends Configuration {
    */
   public int getScribeSourcePort() {
     return getInt(SCRIBE_SOURCE_PORT, DEFAULT_SCRIBE_SOURCE_PORT);
+  }
+  
+  /**
+   * Returns the boolean to secure data transport or not
+   */
+  public boolean getIsSecureSSLTransport() {
+	  return getBoolean(SECURED_SSL_TRANSPORT, false);
   }
 
   /**

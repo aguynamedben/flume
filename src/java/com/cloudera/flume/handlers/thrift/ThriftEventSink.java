@@ -20,6 +20,10 @@ package com.cloudera.flume.handlers.thrift;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -89,23 +93,38 @@ public class ThriftEventSink extends EventSink.Base {
     }
   }
 
-  @Override
-  public void open() throws IOException {
+  public void open(boolean secured) throws IOException {
 
     try {
-      if (nonblocking) {
-        // non blocking must use "Framed transport"
-        transport = new TSocket(host, port);
-        stats = new TStatsTransport(transport);
-        transport = new TFramedTransport(stats);
+      // TODO: will "TFramedTransport" handle nonblocking SSLSockets correctly?
+      if(secured) {
+	      if (nonblocking) {
+	        // non blocking must use "Framed transport"
+	    	transport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
+	        stats = new TStatsTransport(transport);
+	        transport = new TFramedTransport(stats);
+	      } else {
+	        transport = new TSocket(SSLSocketFactory.getDefault().createSocket(host, port));
+	        stats = new TStatsTransport(transport);
+	        transport = stats;
+	      }
       } else {
-        transport = new TSocket(host, port);
-        stats = new TStatsTransport(transport);
-        transport = stats;
+    	  if (nonblocking) {
+  	        // non blocking must use "Framed transport"
+  	    	transport = new TSocket(host, port);
+  	        stats = new TStatsTransport(transport);
+  	        transport = new TFramedTransport(stats);
+  	      } else {
+  	        transport = new TSocket(host, port);
+  	        stats = new TStatsTransport(transport);
+  	        transport = stats;
+  	      }
       }
 
       TProtocol protocol = new TBinaryProtocol(transport);
-      transport.open();
+      if (!transport.isOpen()) {
+    	  transport.open();
+      }
       client = new Client(protocol);
       LOG.info("ThriftEventSink open on port " + port + " opened");
 
@@ -113,6 +132,13 @@ public class ThriftEventSink extends EventSink.Base {
       throw new IOException("Failed to open thrift event sink at " + host + ":"
           + port + " : " + e.getMessage());
     }
+  }
+  
+  @Override
+  public void open() throws IOException {
+	  FlumeConfiguration conf = FlumeConfiguration.get();
+	  boolean secured = conf.getIsSecureSSLTransport();
+	  open(secured);
   }
 
   @Override
